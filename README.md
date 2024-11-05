@@ -6,13 +6,13 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 
 ## Table of Contents
 
-- [✨ Features](#features)
+- ✨ [Features](#features)
 - 💻 [Technologies Used](#technologies-used)
 - 🏛️ [Project Architecture](#project-architecture)
 - 🧠 [Design Decisions](#design-decisions)
 - 🛡️ [Validation, Error Handling, and Logging](#validation-error-handling-and-logging)
 - ⚙️ [Project Setup](#project-setup)
-- [Nugget Packages](#nugget-packages)
+- 📦 [Nugget Packages](#nugget-packages)
 - ➕ [Additional Features](#additional-features)
 
 ---
@@ -29,7 +29,7 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 
 ---
 
-## 💻 Technologies Used
+## Technologies Used
 
 - ⚙️ **ASP.NET Core 8**: The primary framework used to build a robust and scalable Web API.
 - 🗄️ **Entity Framework Core**: An ORM (Object-Relational Mapper) used to interact with the SQLite database in an object-oriented way.
@@ -239,7 +239,7 @@ Here’s the **Additional Features** section in README format:
 
 ---
 
-## ➕ Additional Features
+## Additional Features
 
 In addition to core functionality, the **Blog API Project** includes several extra features that enhance usability, maintainability, and ease of deployment.
 
