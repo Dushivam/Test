@@ -6,13 +6,13 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 
 ## Table of Contents
 
-- ✨ [Features](#features)
+- [✨ Features](#features)
 - 💻 [Technologies Used](#technologies-used)
 - 🏛️ [Project Architecture](#project-architecture)
 - 🧠 [Design Decisions](#design-decisions)
 - 🛡️ [Validation, Error Handling, and Logging](#validation-error-handling-and-logging)
 - ⚙️ [Project Setup](#project-setup)
-- 📦 [Nugget Packages](#nugget-packages)
+- [Nugget Packages](#nugget-packages)
 - ➕ [Additional Features](#additional-features)
 
 ---
