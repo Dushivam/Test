@@ -31,7 +31,7 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 
 ## 💻 Technologies Used
 
-- ⚙️ **ASP.NET Core 8**: The primary framework used to build a robust and scalable Web API.
+- ⚙️ **ASP.NET Core 8**: The primary framework used to build the Web API.
 - 🗄️ **Entity Framework Core**: An ORM (Object-Relational Mapper) used to interact with the SQLite database in an object-oriented way.
 - 💾 **SQLite**: Lightweight, file-based database chosen for simplicity and ease of setup.
 - 🐳 **Docker**: Containerization tool that enables easy deployment and environment consistency across different platforms.
@@ -43,17 +43,25 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 
 ## 🏛️ Project Architecture
 
-The **Blog API Project** follows a layered architecture that promotes separation of concerns and adheres to SOLID principles, ensuring that each layer has a specific responsibility. This architecture simplifies testing, maintenance, and scalability.
+The  follows a layered architecture that promotes separation of concerns and adheres to SOLID principles, ensuring that each layer has a specific responsibility. This architecture simplifies testing, maintenance, and scalability.
 
 ### Layers Overview
 
-- **Controller**: Handle HTTP requests, respond to the client, and delegate business logic to services. This is where request validation and input checking occur.
-- **Service**: Contain the core business logic, interacting with repositories to manage data operations. Services are responsible for orchestrating CRUD operations and enforcing application rules.
-- **Repositories**: Abstract the data layer and manage database interactions. They use Entity Framework Core to interact with the SQLite database, ensuring that data access is consistent and efficient.
-- **Model**: Define the data structures used throughout the API, including validation attributes to enforce data integrity.
-- **Utilities**: Include logging and error-handling mechanisms (e.g., Serilog) that capture important events and errors, supporting diagnostics and monitoring.
+The **Blog API Project** follows a layered structure to enhance modularity and maintainability.
+
+At its core, the **API layer** consists of controllers that handle HTTP requests and route them to the appropriate services. Controllers manage request validation and return structured HTTP responses to the client, acting as an entry point to the API.
+
+The **Service layer** contains the core business logic of the application. It interacts with the repository layer through interfaces, adhering to SOLID principles. This design ensures that services can perform data operations (CRUD) using repositories and dependency injection is used here to manage dependencies on repositories.
+
+The **Repository layer** manages data access and persistence. This layer isolates database operations in classes that interact directly with `BlogDbContext`, an Entity Framework Core context that maps `BlogPost` models to database tables. Implements the Repository Pattern to interact with the data layer. This layer isolates the direct database access and provides methods to query, add, update, and delete data, all through BlogDbContext using Entity Framework Core.
+
+The **Data layer** is backed by an SQLite database, which stores blog post data in tables mapped to C# models via Entity Framework Core. This lightweight relational database serves as the persistent storage for the project.
+
+Additionally, the **Model layer** defines the data structures used throughout the API, including validation attributes to enforce data integrity, while the **Utilities layer** includes logging and error-handling mechanisms (e.g., Serilog) to capture events and errors, supporting monitoring. Logging, error handling, and unit testing are included to enhance reliability, with Docker containerization as an optional feature to facilitate deployment.
 
 ### Architecture Diagram
+
+![Architecture](images/Architecture.png)
 
 ---
 
