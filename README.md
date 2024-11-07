@@ -180,7 +180,7 @@ Follow these steps to set up and run the **Blog API Project** locally or in a co
    dotnet run
    ```
 
-   The API will be available at `https://localhost:5001` (or `http://localhost:5000`).
+   By default, the API will be available at `https://localhost:<ssl-port>` or `http://localhost:<port>`. 
 
 6. **Access Swagger Documentation**
 
