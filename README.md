@@ -12,8 +12,10 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 - 🧠 [Design Decisions](#-design-decisions)
 - 🛡️ [Validation, Error Handling, and Logging](#-validation-error-handling-and-logging)
 - ⚙️ [Project Setup](#-project-setup)
+- 🧪 [Testing Strategy](#-testing-strategy)
 - 📦 [Nugget Packages](#-nugget-packages)
 - ➕ [Additional Features](#-additional-features)
+- 🏁 [Conclusion](#-conclusion)
 
 ---
 
@@ -49,15 +51,15 @@ The  follows a layered architecture that promotes separation of concerns and adh
 
 The **Blog API Project** follows a layered structure to enhance modularity and maintainability.
 
-At its core, the **API layer** consists of controllers that handle HTTP requests and route them to the appropriate services. Controllers manage request validation and return structured HTTP responses to the client, acting as an entry point to the API.
+- At its core, the **API layer** consists of controllers that handle HTTP requests and route them to the appropriate services. Controllers manage request validation and return structured HTTP responses to the client, acting as an entry point to the API.
 
-The **Service layer** contains the core business logic of the application. It interacts with the repository layer through interfaces, adhering to SOLID principles. This design ensures that services can perform data operations (CRUD) using repositories and dependency injection is used here to manage dependencies on repositories.
+- The **Service layer** contains the core business logic of the application. It interacts with the repository layer through interfaces, adhering to SOLID principles. This design ensures that services can perform data operations (CRUD) using repositories and dependency injection is used here to manage dependencies on repositories.
 
-The **Repository layer** manages data access and persistence. This layer isolates database operations in classes that interact directly with `BlogDbContext`, an Entity Framework Core context that maps `BlogPost` models to database tables. Implements the Repository Pattern to interact with the data layer. This layer isolates the direct database access and provides methods to query, add, update, and delete data, all through BlogDbContext using Entity Framework Core.
+- The **Repository layer** manages data access and persistence. This layer isolates database operations in classes that interact directly with `BlogDbContext`, an Entity Framework Core context that maps `BlogPost` models to database tables. Implements the Repository Pattern to interact with the data layer. This layer isolates the direct database access and provides methods to query, add, update, and delete data, all through BlogDbContext using Entity Framework Core.
 
-The **Data layer** is backed by an SQLite database, which stores blog post data in tables mapped to C# models via Entity Framework Core. This lightweight relational database serves as the persistent storage for the project.
+- The **Data layer** is backed by an SQLite database, which stores blog post data in tables mapped to C# models via Entity Framework Core. This lightweight relational database serves as the persistent storage for the project.
 
-Additionally, the **Model layer** defines the data structures used throughout the API, including validation attributes to enforce data integrity, while the **Utilities layer** includes logging and error-handling mechanisms (e.g., Serilog) to capture events and errors, supporting monitoring. Logging, error handling, and unit testing are included to enhance reliability, with Docker containerization as an optional feature to facilitate deployment.
+- Additionally, the **Model layer** defines the data structures used throughout the API, including validation attributes to enforce data integrity, while the **Utilities layer** includes logging and error-handling mechanisms (e.g., Serilog) to capture events and errors, supporting monitoring. Logging, error handling, and unit testing are included to enhance reliability, with Docker containerization as an optional feature to facilitate deployment.
 
 ### Architecture Diagram
 
@@ -67,17 +69,17 @@ Additionally, the **Model layer** defines the data structures used throughout th
 
 ## 🧠 Design Decisions
 
-Throughout the development of the **Blog API Project**, several key design decisions were made to ensure maintainability, scalability, and adherence to best practices. Below are some of the main considerations:
+Throughout the development of the **Blog API Project**, several key design decisions were made to ensure maintainability, scalability, and adherence(change) to best practices. Below are some of the main considerations:
 
 ### 1. Layered Architecture
 
-A layered architecture was chosen to separate concerns and responsibilities across different layers:
+A layered architecture was chosen to separate responsibilities across different layers:
    - **Controllers** handle request validation and response.
    - **Services** encapsulate the business logic and orchestrate data interactions.
    - **Repositories** manage data access, keeping data logic isolated from other parts of the application.
-   - **Models** serve as data contracts, defining the structure and rules for each entity.
+   - **Models** serve as data templates, defining the structure and rules for each entity.
 
-   This approach enables each layer to be independently tested, developed, and maintained, making the project more manageable.
+This approach enables each layer to be independently tested, developed, and maintained, making the project more manageable.
 
 ### 2. Dependency Injection (DI)
 
@@ -87,13 +89,8 @@ The project uses **Dependency Injection** extensively, allowing services and rep
 
 Data annotations were selected to enforce validation rules directly in the **Model** layer. This decision simplifies validation checks in the API, allowing automatic validation via attributes like `[Required]` and `[RegularExpression]` (for example, ensuring the `Author` name contains only letters).
 
-### 4. Error Handling and Logging
-
-To ensure robust error handling:
-   - **Try-catch** blocks and specific error messages are used throughout service and repository layers.
+### 4. Logging
    - **Serilog** was chosen for logging due to its structured logging capabilities, making it easier to track and monitor application events.
-    - **Global Exception Handling** could also be added to further streamline error handling.
-These practices enhance the reliability of the API, making it easier to identify and resolve issues in production environments.
 
 ### 5. Database Choice: SQLite
 
@@ -125,8 +122,7 @@ Data validation is enforced through **Data Annotations** in the model layer, whi
 Robust error handling is implemented throughout the project to manage unexpected situations and provide meaningful feedback to the client:
    - **Try-Catch Blocks**: Each service and repository method is wrapped in a `try-catch` block to capture any potential errors, particularly those related to database operations.
    - **Custom Error Messages**: Meaningful error messages are provided for specific scenarios, such as “Post not found” when attempting to update or delete a non-existent post.
-   - **Global Exception Handling**: A global exception handler could be added to further streamline error handling, ensuring that any unhandled exceptions are logged and a generic error message is returned to the client.
-
+   
 ### 3. Logging with Serilog
 
 **Serilog** is integrated to provide structured and detailed logging throughout the API. This helps with tracking actions, diagnosing issues, and monitoring the application:
@@ -144,7 +140,7 @@ Follow these steps to set up and run the **Blog API Project** locally or in a co
 
 ### Prerequisites
 
-- [.NET SDK](https://dotnet.microsoft.com/download) (version 6.0 or later)
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download) (version 8)
 - [Docker](https://www.docker.com/get-started) (for containerized deployment)
 - [SQLite](https://www.sqlite.org/download.html) (optional, if you want to inspect the database directly)
 
@@ -153,8 +149,7 @@ Follow these steps to set up and run the **Blog API Project** locally or in a co
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/BlogApiProject.git
-   cd BlogApiProject
+   git clone https://github.com/Dushivam/BlogApiProject.git
    ```
 
 2. **Install Dependencies**
@@ -217,13 +212,47 @@ Follow these steps to set up and run the **Blog API Project** locally or in a co
 
 ---
 
-Here’s the **Packages** section in README format:
+## 🧪 Testing Strategy
+
+This project includes comprehensive unit tests across multiple layers, ensuring that each part of the API functions as expected and meets specified requirements. Testing focuses on validating business logic, data integrity, and error handling to maintain a high level of reliability.
+
+### Testing Frameworks and Tools
+
+- **xUnit**: Used as the primary testing framework, providing a straightforward structure and compatibility with .NET projects.
+- **Moq**: Utilized to create mock objects for dependencies, allowing for isolated testing of service and controller layers without requiring database access.
+
+### Test Coverage
+
+1. **Controller Tests** (`BlogPostsControllerTests`):  
+   - Ensures each endpoint functions correctly and returns appropriate HTTP responses.
+   - Validates input handling, such as checking for `BadRequest` on invalid input and `NotFound` responses when an item is not available.
+   - Mocks service layer interactions to isolate controller functionality.
+
+2. **Service Tests** (`BlogPostServiceTests`):  
+   - Verifies that each service method executes business logic correctly.
+   - Ensures data validation rules are applied consistently.
+   - Tests CRUD operations to confirm that data interactions with the repository layer are correctly triggered and handled.
+
+3. **Repository Tests** (`BlogPostRepositoryTests`):  
+   - Directly tests interactions with the SQLite database.
+   - Validates database operations, including add, update, delete, and retrieval methods, perform as expected.
+   - Confirms that the repository handles data integrity issues and exceptions appropriately.
+
+4. **Model Tests** (`BlogPostTests`):  
+   - Tests model-specific behaviors and validation attributes.
+   - Ensures that data annotations enforce rules like required fields and format restrictions on properties (e.g., ensuring `Author` contains no numbers).
+
+### Test Results
+A total of 35 tests were conducted, covering all major components and scenarios. All tests passed successfully, confirming the reliability and accuracy of the API’s core functionality.
+These tests ensure the API meets functional requirements and provides reliable feedback on each core component. With this test suite, modifications can be confidently introduced without breaking existing features, maintaining the API's robustness and stability.
+
+![Test Results](images/TestResults.png)
 
 ---
 
 ## 📦 Nugget Packages
 
-The **Blog API Project** utilizes several **NuGet packages** to streamline development and enhance functionality. Below is a list of the key packages and their purposes:
+The **Blog API Project** utilizes several **NuGet packages** to ease development. Below is a list of the key packages and their purposes:
 
 - **Microsoft.EntityFrameworkCore.Sqlite**: Provides SQLite support for Entity Framework Core, enabling the API to use SQLite as its database.
 
@@ -237,13 +266,7 @@ The **Blog API Project** utilizes several **NuGet packages** to streamline devel
 
 - **Swashbuckle.AspNetCore**: Adds Swagger support to auto-generate API documentation and create an interactive UI for testing API endpoints.
 
-- **xUnit**: A popular testing framework for .NET, used to create unit tests for the project to ensure code reliability and functionality.
-
-Each of these packages plays a crucial role in the functionality, reliability, and usability of the API, helping to enforce best practices and improve developer experience.
-
----
-
-Here’s the **Additional Features** section in README format:
+- **xUnit and Moq**: A popular testing frameworks for .NET, used to create unit tests for the project to ensure code reliability and functionality.
 
 ---
 
@@ -255,12 +278,8 @@ In addition to core functionality, the **Blog API Project** includes several ext
 
 - **Swagger Documentation**: Swagger is integrated to auto-generate API documentation and provide an interactive interface at `/swagger`. This interface allows users to test endpoints directly, making it easier for developers and users to understand the available functionality.
 
-- **Data Validation and Integrity**: Extensive use of data annotations ensures that incoming data adheres to specified rules (e.g., no numbers in the `Author` field). This validation prevents incorrect or incomplete data from being processed, maintaining data integrity.
-
-- **Centralized Logging with Serilog**: All actions, requests, and errors are logged using Serilog. This structured logging helps with debugging and provides valuable insights into the API’s performance and usage patterns.
-
-- **Comprehensive Error Responses**: The API includes meaningful error responses and status codes, enabling users to understand issues more easily. For example, if a requested blog post is not found, a `404 Not Found` response is returned with a clear message.
-
-These additional features contribute to a well-rounded API that’s easy to deploy, monitor, and use, meeting both functional and non-functional requirements effectively.
-
 ---
+
+## 🏁 Conclusion
+
+The **Blog API Project** provides a clean, reliable solution for managing blog posts, showcasing best practices in API development. Designed with a focus on simplicity, data integrity, and maintainability, it meets all requirements for a robust and well-documented API.
