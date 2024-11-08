@@ -1,5 +1,4 @@
 # Blog API Project
-
 ## Description
 
 The project uses SQLite as its database and uses Serilog for structured logging, ensuring that critical actions and errors are logged effectively. The project is also Dockerized for ease of deployment, making it simple to run in any environment. Additionally, comprehensive validation is applied to ensure data integrity, and meaningful error messages are returned to the client, enhancing the API's usability
@@ -8,10 +7,10 @@ The project uses SQLite as its database and uses Serilog for structured logging,
 
 - ✨ [Features](#-features)
 - 💻 [Technologies Used](#-technologies-used)
-- 🏛️ [Project Architecture](#-project-architecture)
+- 🏛️ [Project Architecture](#️-project-architecture)
 - 🧠 [Design Decisions](#-design-decisions)
-- 🛡️ [Validation, Error Handling, and Logging](#-validation-error-handling-and-logging)
-- ⚙️ [Project Setup](#-project-setup)
+- 🛡️ [Validation, Error Handling, and Logging](#️-validation-error-handling-and-logging)
+- ⚙️ [Project Setup](#️-project-setup)
 - 🧪 [Testing Strategy](#-testing-strategy)
 - 📦 [Nugget Packages](#-nugget-packages)
 - ➕ [Additional Features](#-additional-features)
@@ -69,40 +68,78 @@ The **Blog API Project** follows a layered structure to enhance modularity and m
 
 ## 🧠 Design Decisions
 
-Throughout the development of the **Blog API Project**, several key design decisions were made to ensure maintainability, scalability, and adherence(change) to best practices. Below are some of the main considerations:
+The Blog API Project was designed with careful consideration of best practices and maintainability. Here are some key design decisions made to ensure that the API is robust, scalable, and user-friendly:
 
 ### 1. Layered Architecture
 
 A layered architecture was chosen to separate responsibilities across different layers:
    - **Controllers** handle request validation and response.
-   - **Services** encapsulate the business logic and orchestrate data interactions.
+   - **Services** encapsulate the business logic and manage data operations through repositories.
    - **Repositories** manage data access, keeping data logic isolated from other parts of the application.
    - **Models** serve as data templates, defining the structure and rules for each entity.
-
+   - **DTOs (Data Transfer Objects)** separate input/output models from the core domain models, adding a layer of abstraction for better API control.
+      
 This approach enables each layer to be independently tested, developed, and maintained, making the project more manageable.
+
+### 2. Use of Data Transfer Objects (DTOs)
+
+DTOs were introduced to facilitate and secure data flow between the client and server:
+   - **BlogPostCreateDto**: Used when creating a new blog post, this DTO includes only the fields necessary for creation, preventing unintended fields from being set.
+   - **BlogPostUpdateDto**: Used to update an existing blog post, restricting updates only to the `Title`, `Content`, and `Author` fields, while preventing updates to fields like `Id` and `PublishedDate` to ensure data integrity.
+   
+![Test Results](images/CreateDTO.png)  ![Test Results](images/UpdateDTO.png) 
+
+DTOs allows better control over which data is exposed to clients and what data clients can modify.
+
+### 3. Restricted Updates on Certain Fields
+
+Certain fields, such as `Id` and `PublishedDate`, are intentionally restricted in update operations:
+   - **Id**: The primary identifier for each blog post, the `Id` field should remain unchanged to maintain database integrity and prevent issues with references.
+   - **PublishedDate**: This field is intended to reflect the creation date and is automatically set during creation. Locking it prevents tampering and maintains the integrity of the timeline for posts.
+
+Restricting updates on these fields helps maintain a consistent record of each blog post’s history and avoids unintended data modifications.
 
 ### 2. Dependency Injection (DI)
 
-The project uses **Dependency Injection** extensively, allowing services and repositories to be injected where needed rather than being tightly coupled to any specific implementation. DI enhances testability and modularity, enabling easier swapping or modification of individual components.
+Dependency Injection is used throughout the project to inject services and repositories where needed, rather than hard-coding dependencies:
+   - **Advantages**: It enhances testability, modularity, and flexibility, allowing individual components to be modified without impacting the rest of the codebase.
+   - **Implementation**: By registering dependencies in the `Program.cs` file, services and repositories are made available to the controllers and other layers, promoting loose coupling.
 
 ### 3. Data Validation with Annotations
 
 Data annotations were selected to enforce validation rules directly in the **Model** layer. This decision simplifies validation checks in the API, allowing automatic validation via attributes like `[Required]` and `[RegularExpression]` (for example, ensuring the `Author` name contains only letters).
 
-### 4. Logging
-   - **Serilog** was chosen for logging due to its structured logging capabilities, making it easier to track and monitor application events.
+Data annotations in the **Model** and **DTO** layers enforce validation rules for each field:
+   - **Required and MaxLength**: Ensures that fields like `Title` and `Content` meet specific length and existence requirements.
+   - **Regular Expressions**: Enforces specific formats, such as restricting the `Author` field to only letters and spaces.
 
-### 5. Database Choice: SQLite
+This approach simplifies validation within the API and prevents invalid data from entering the application, ensuring data integrity.
 
-**SQLite** was chosen as the database for its lightweight and file-based nature, which simplifies local development and deployment in Docker. While SQLite is limited in scalability for high-traffic production use, it is ideal for the scope of this project and can be easily swapped out for a more robust DBMS if needed.
+### 6. Structured Logging with Serilog
+
+**Serilog** was chosen for logging due to its structured logging capabilities:
+   - **Console and File Logging**: Logs are output to both the console and a file, providing both real-time information during development as well as persistent logs further diagnostics.
+   - **Structured Data**: Logs are structured, meaning they capture additional context such as post IDs or error types, which facilitates easier filtering and tracking of application events.
+
+Logging key actions and errors in this way provides valuable information for debugging and monitoring the API's performance.
+
+### 7. Database Choice: SQLite
+
+**SQLite** was chosen for its simplicity and portability:
+   - **Lightweight**: SQLite is a file-based database that requires minimal setup, making it ideal for local development and smaller-scale applications.
+
+While SQLite is limited in scalability for high-traffic production use, it is ideal for the scope of this project and can be easily swapped out for a more robust DBMS if needed.
 
 ### 6. Docker for Deployment
 
 Dockerization was implemented to make the API easy to deploy and run in isolated environments. This approach ensures consistency across development, testing, and production environments, reducing issues related to configuration or environment setup.
 
-### 7. Use of Swagger for API Documentation
+### 9. Use of Swagger for API Documentation
 
-**Swagger** was integrated for automatic API documentation. Swagger provides an interactive interface to test the API endpoints, which is valuable for both development and client testing.
+**Swagger** was integrated to auto-generate API documentation and provide an interactive interface.
+   - **API Exploration**: The Swagger UI allows developers to explore API endpoints and understand their functionality. They can also test the available endpoints, input data, and view responses without needing separate documentation.
+
+Swagger’s interactive documentation makes it easier for both developers to test and understand the API.
 
 ---
 
@@ -112,17 +149,19 @@ This project incorporates comprehensive validation, error handling, and logging 
 
 ### 1. Validation
 
-Data validation is enforced through **Data Annotations** in the model layer, which provide a simple yet effective way to validate user inputs:
-   - **Required Attributes**: Key fields, such as `Title` and `Content`, are marked as required to prevent incomplete data entries.
-   - **Custom Regular Expressions**: The `Author` field includes a regular expression check to ensure it contains only alphabetic characters and spaces, enforcing a standard format.
-   - **Model State Validation**: Each controller action checks `ModelState.IsValid` to confirm that input data conforms to the specified validation rules. If validation fails, a `400 Bad Request` response with detailed validation errors is returned to the client.
+Data validation is enforced through **Data Annotations** in the model layer.
+   - **Required Attributes**: Key fields, such as `Id`, `Title` and `Content`, are mandatory.
+   - **Custom Regular Expressions**: The `Author` field includes a regular expression check to ensure it contains only alphabetic characters and spaces.
+   - **Model State Validation**: The controller checks ModelState.IsValid; if validation fails, a 400 Bad Request response with error details is returned.
+
+![Model](images/Model.png)
 
 ### 2. Error Handling
 
-Robust error handling is implemented throughout the project to manage unexpected situations and provide meaningful feedback to the client:
+Error handling is implemented to manage unexpected issues and provide clear feedback to the client:
    - **Try-Catch Blocks**: Each service and repository method is wrapped in a `try-catch` block to capture any potential errors, particularly those related to database operations.
-   - **Custom Error Messages**: Meaningful error messages are provided for specific scenarios, such as “Post not found” when attempting to update or delete a non-existent post.
-   
+   - **Custom Error Messages**: Meaningful error messages, such as “Post not found” are provided for relevent scenarios.
+
 ### 3. Logging with Serilog
 
 **Serilog** is integrated to provide structured and detailed logging throughout the API. This helps with tracking actions, diagnosing issues, and monitoring the application:
@@ -130,7 +169,7 @@ Robust error handling is implemented throughout the project to manage unexpected
    - **Error Logging**: Errors caught in `catch` blocks are logged with stack traces to assist in diagnosing issues.
    - **Structured Logs**: Logs are structured to include relevant information (such as post IDs) to enhance readability and filter logs more easily.
 
-With these measures in place, the API is well-equipped to handle user errors, unexpected issues, and critical application events, ensuring a high level of stability and reliability.
+With these measures, the API is equipped to handle user errors, unexpected issues, and critical application events, ensuring a high level of stability and reliability.
 
 ---
 
@@ -180,24 +219,16 @@ Follow these steps to set up and run the **Blog API Project** locally or in a co
    dotnet run
    ```
 
-   By default, the API will be available at `https://localhost:<ssl-port>` or `http://localhost:<port>`. 
-
-6. **Access Swagger Documentation**
-
-   Once the API is running, you can access Swagger documentation at:
-
-   ```
-   https://localhost:5001/swagger
-   ```
+   By default, the API will be available at `http://localhost:<port>`.
 
 ### Running with Docker
 
 1. **Build Docker Image**
 
-   Build the Docker image for the application:
+   Navigate to the root project directory (the one containing the solution file, .sln), and build the Docker image for the application:
 
    ```bash
-   docker build -t blog-api .
+   docker build -f ./Blog.API/Dockerfile -t blogpostapi:latest .
    ```
 
 2. **Run Docker Container**
@@ -205,10 +236,19 @@ Follow these steps to set up and run the **Blog API Project** locally or in a co
    Start the container with the following command:
 
    ```bash
-   docker run -p 5000:80 blog-api
+   docker run -p 8080:8080 blogpostapi:latest
    ```
 
-   The API will be accessible at `http://localhost:5000`.
+   The API will be accessible at `http://localhost:8080`.
+
+### **Access Swagger Documentation**
+
+Once the project is running, you can access the Swagger documentation to test the APIs at:
+
+```
+http(s)://localhost:<port>/swagger
+```
+![Screenshot Swagger](images/Swagger.png)
 
 ---
 
@@ -243,7 +283,7 @@ This project includes comprehensive unit tests across multiple layers, ensuring 
    - Ensures that data annotations enforce rules like required fields and format restrictions on properties (e.g., ensuring `Author` contains no numbers).
 
 ### Test Results
-A total of 35 tests were conducted, covering all major components and scenarios. All tests passed successfully, confirming the reliability and accuracy of the API’s core functionality.
+A total of 42 tests were conducted, covering all major components and scenarios. All tests passed successfully, confirming the reliability and accuracy of the API’s core functionality.
 These tests ensure the API meets functional requirements and provides reliable feedback on each core component. With this test suite, modifications can be confidently introduced without breaking existing features, maintaining the API's robustness and stability.
 
 ![Test Results](images/TestResults.png)
@@ -268,15 +308,25 @@ The **Blog API Project** utilizes several **NuGet packages** to ease development
 
 - **xUnit and Moq**: A popular testing frameworks for .NET, used to create unit tests for the project to ensure code reliability and functionality.
 
+C:\Users\DJAIPALSINGH\.nuget\packages\nswag.annotations\14.1.0\
+C:\Users\DJAIPALSINGH\.nuget\packages\nswag.aspnetcore\14.1.0\
 ---
 
 ## ➕ Additional Features
 
 In addition to core functionality, the **Blog API Project** includes several extra features that enhance usability, maintainability, and ease of deployment.
 
-- **Docker Support**: The API is fully Dockerized, allowing easy deployment across different environments with consistent behavior. This enables the application to be run in a container with minimal configuration, making it ideal for cloud deployment.
+- **Docker Support**: The API is fully Dockerized, allowing easy deployment across different environments with consistent behavior. This enables the application to be run in a container with minimal configuration.
 
 - **Swagger Documentation**: Swagger is integrated to auto-generate API documentation and provide an interactive interface at `/swagger`. This interface allows users to test endpoints directly, making it easier for developers and users to understand the available functionality.
+
+- **Search and Filtering**: The API includes search and filtering capabilities on the `GET /api/BlogPosts` endpoint. Users can filter blog posts by `title`, `author`, and published `date range` (using `startDate` and `endDate` query parameters). This feature enables targeted queries, making it easier to retrieve relevant data based on specific criteria.
+
+  **Example Usage**:
+  - `GET /api/BlogPosts?title=MyTitle` — Retrieve posts with titles containing "MyTitle".
+  - `GET /api/BlogPosts?author=AuthorName` — Retrieve posts by a specific author.
+  - `GET /api/BlogPosts?startDate=2023-01-01&endDate=2023-12-31` — Retrieve posts published within a specified date range.
+  - Combination of filters is also supported, e.g., `GET /api/BlogPosts?title=MyTitle&author=AuthorName&startDate=2023-01-01&endDate=2023-12-31`.
 
 ---
 
